@@ -1,0 +1,32 @@
+server:
+  port: 2344
+
+lavalink:
+  server:
+    password: "youshallnotpass"
+    sources:
+      youtube: true
+      bandcamp: true
+      soundcloud: true
+      twitch: true
+      vimeo: true
+      http: true
+      local: false
+    bufferDurationMs: 400
+    youtubeSearchEnabled: true
+    gc-warnings: true
+
+metrics:
+  prometheus:
+    enabled: false
+    endpoint: /metrics
+
+plugins:
+  - youtube-plugin-1.13.3.jar
+  - youtube-common-1.13.3.jar
+  - lavasrc-plugin-4.7.1.jar
+
+lavasrc:
+  spotify:
+    clientId: ${SPOTIFY_ID}
+    clientSecret: ${SPOTIFY_SECRET}
