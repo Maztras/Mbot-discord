@@ -37,19 +37,25 @@ async def on_ready():
     print(f"✅ El bot está conectado como {bot.user}")
     actualizar_estado.start()
 
+ID_SERVIDOR_PRINCIPAL = 1087474975830704189  # Reemplaza con el ID de tu servidor
+
 @tasks.loop(minutes=1)
 async def actualizar_estado():
-    for guild in bot.guilds:
-        await guild.chunk()
+    guild = bot.get_guild(ID_SERVIDOR_PRINCIPAL)
+    if guild:
+        await guild.chunk()  # Esto asegura que el caché se llene
         total = guild.member_count
-        en_linea = sum(1 for m in guild.members if m.status in [discord.Status.online, discord.Status.idle, discord.Status.dnd])
+        en_linea = sum(
+            1 for m in guild.members
+            if m.status in [discord.Status.online, discord.Status.idle, discord.Status.dnd]
+        )
         await bot.change_presence(
             activity=discord.Activity(
                 type=discord.ActivityType.watching,
-                name=f"en línea: {en_linea}/{total} miembros 👀"
+                name=f" en línea a {en_linea}/{total} 👀"
             )
         )
-        break
+
 
 @bot.command()
 async def hola(ctx):
@@ -57,11 +63,11 @@ async def hola(ctx):
 
 @bot.command()
 async def stats(ctx):
-    for guild in bot.guilds:
-        await guild.chunk()
-        total = guild.member_count
-        en_linea = sum(1 for member in guild.members if member.status == discord.Status.online)
-        await ctx.send(f"👥 Miembros conectados: {en_linea}/{total}")
-        break
+    guild = ctx.guild
+    members = [m async for m in guild.fetch_members(limit=None)]
+    total = len(members)
+    en_linea = sum(1 for m in members if m.status in [discord.Status.online, discord.Status.idle, discord.Status.dnd])
+    await ctx.send(f"👥 {guild.name}: {en_linea}/{total} miembros conectados.")
+
 
 bot.run(TOKEN)
